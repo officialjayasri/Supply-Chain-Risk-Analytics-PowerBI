@@ -22,10 +22,6 @@ Developed an interactive Power BI dashboard to analyze supply chain performance 
 - Supplier Performance
 - Supply Chain Risk Score
 
-## Dashboard Screenshots
-
-(Upload screenshots here)
-
 ## Author
 
 Jayasri M
