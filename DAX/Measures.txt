@@ -1,1 +1,94 @@
+90-DAY RISK EXPOSURE = SUMX(FACT_RISK_EVENTS,FACT_RISK_EVENTS[Financial_Impact]*FACT_RISK_EVENTS[Probability_Score])
+
+AVG LEAD DAYS = AVERAGEX(FACT_SHIPMENT,FACT_SHIPMENT[Actual_Delivery_Date] - FACT_SHIPMENT[Order_Date])
+
+Avg Risk Score = 
+AVERAGE(FACT_RISK_EVENTS[Probability_Score])
+
+Cost Per Shipment = 
+AVERAGE(FACT_SHIPMENT[Shipping_Cost])
+
+Critical Risk Events = 
+CALCULATE(
+    COUNTROWS(FACT_RISK_EVENTS),
+    FILTER(
+        DIM_RISK_CATEGORY,
+        DIM_RISK_CATEGORY[Risk_Priority] = "Critical"
+    )
+)
+
+Delay % = DIVIDE(SUM(FACT_SHIPMENT[Is_Delayed]),COUNTROWS(FACT_SHIPMENT),0)
+
+Inventory Turnover = 
+DIVIDE(
+    SUM(FACT_SHIPMENT[Quantity]),
+    AVERAGE(FACT_INVENTORY[Current_Stock])
+)
+
+Most Used Transport Mode = 
+VAR T =
+    TOPN(
+        1,
+        SUMMARIZE(DIM_TRANSPORTATION,
+        DIM_TRANSPORTATION[Transport_Mode],
+        "Shippments",[TOTAL SHIPMENTS]
+        ),
+        [Shippments],
+        desc)
+    RETURN
+    MAXX(T,DIM_TRANSPORTATION[Transport_Mode])
+
+ON TIME DELIVERY % = DIVIDE(SUM(FACT_SHIPMENT[Is_On_Time]),COUNTROWS(FACT_SHIPMENT),0)
+
+Primary Risk Events = VAR T = 
+TOPN(1,
+SUMMARIZE(FACT_RISK_EVENTS,FACT_RISK_EVENTS[Risk_Type],
+"FactCategory" ,
+countrows(FACT_RISK_EVENTS)),
+[FactCategory],
+desc)
+RETURN
+MAXX(T,FACT_RISK_EVENTS[Risk_Type])
+
+RISK SCORE = AVERAGE(FACT_RISK_EVENTS[Risk_Severity])
+
+Stock Duration = divide(sum(FACT_INVENTORY[Current_Stock]),divide(sum(FACT_SHIPMENT[Quantity]),365))
+
+Stock Risk Items = COUNTROWS(filter(FACT_INVENTORY,FACT_INVENTORY[Current_Stock]<FACT_INVENTORY[Safety_Stock]))
+
+Total Financial Impact = 
+SUM(FACT_RISK_EVENTS[Financial_Impact])
+
+TOTAL FREIGHT COST = SUM(FACT_SHIPMENT[Shipping_Cost])
+
+TOTAL INVENTORY = SUM(FACT_INVENTORY[Inventory_Value])
+
+TOTAL RISK EVENTS = COUNTROWS(FACT_RISK_EVENTS)
+
+TOTAL SHIPMENTS = COUNTROWS(FACT_SHIPMENT)
+
+Utilization % = 
+DIVIDE(
+    AVERAGE(DIM_WAREHOUSE[Utilization_Percentage]),
+    100,0
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
